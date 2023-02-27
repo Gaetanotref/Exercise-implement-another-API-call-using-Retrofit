@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         //GUARDARE IL LOGCAT O IL RUN DOPO AVER RUNNATO
         getMyData()
 
+
+
     }
 
     private fun getMyData() {
@@ -33,12 +35,27 @@ class MainActivity : AppCompatActivity() {
             .build()
             .create(ApiInterface::class.java)
         val retrofitData = retrofit.getData()
+
         retrofitData.enqueue(object :Callback<List<MyDataItem>?>{
             override fun onResponse(
                 call: Call<List<MyDataItem>?>,
                 response: Response<List<MyDataItem>?>
             ) {
                 Log.d("MainActivity","The repo work? ${response.isSuccessful} ")
+                val responseBody = response.body()
+                val myStringBuiler = StringBuilder()
+                if (responseBody != null) {
+                    for (myData in responseBody){
+                        myStringBuiler.append(myData.id)
+                        myStringBuiler.append("\n")
+                        myStringBuiler.append(myData.body)
+                        myStringBuiler.append("\n")
+                    }
+                }else{
+                    Log.d("MainActivity","Error, nothing to show")
+                }
+                val text = findViewById<TextView>(R.id.textView)
+                text.text = myStringBuiler
             }
 
             override fun onFailure(call: Call<List<MyDataItem>?>, t: Throwable) {
